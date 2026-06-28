@@ -7,7 +7,7 @@
 // ─── Supabase（RDB + pgvector + Storage） ───────────────────────────
 export const SUPABASE_CONFIG = {
   url: "https://rqcmzxhngwnkvfrpjxmd.supabase.co",           // 例: https://xxxx.supabase.co
-  anonKey: "sb_publishable_m3mXJat4LD2N_b-FCwppMA_CHD2mbMk",  // Supabase Dashboard > Settings > API publickを設定
+  anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxY216eGhuZ3dua3ZmcnBqeG1kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MDIzODcsImV4cCI6MjA5ODE3ODM4N30.NOKp2PYht2lpNUyDLUo5AJJncwxtr2x48CiWh7CYiHg",  // Supabase Dashboard > Settings > API publickを設定
 };
 
 // テーブル名
