@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>記事詳細 – Knowledge Base</title>
+  <meta name="description" content="ナレッジ詳細ページ" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ── Header ──────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">knowledge<span>.</span>db</a>
+      <div class="db-badges">
+        <span class="db-badge rdb">PostgreSQL</span>
+        <span class="db-badge vec">pgvector</span>
+        <span class="db-badge graph">Neo4j</span>
+        <span class="db-badge storage">Storage</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main ────────────────────────────────────────────────── -->
+  <main class="main-content" id="mainContent">
+
+    <!-- ローディング中はスピナーを表示 -->
+    <div class="state-loading" id="loadingState">記事を読み込んでいます</div>
+
+    <!-- 記事コンテンツ（JS で表示） -->
+    <div id="articleContent" style="display:none">
+
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb">
+        <a href="index.html">← 一覧に戻る</a>
+        <span class="breadcrumb-sep">/</span>
+        <span id="breadcrumbTitle">...</span>
+      </nav>
+
+      <!-- 2カラムレイアウト -->
+      <div class="detail-layout">
+
+        <!-- ── 左カラム：記事本文 ──────────────────────────── -->
+        <div class="article-main">
+
+          <!-- 記事ヘッダ -->
+          <header class="article-header">
+            <div class="card-tags" id="articleTags"></div>
+            <h1 class="article-title" id="articleTitle"></h1>
+            <div class="article-meta">
+              <span id="articleDate"></span>
+            </div>
+          </header>
+
+          <!-- サムネイル（Storage から取得） -->
+          <div class="article-thumbnail" id="articleThumbnail" style="display:none">
+            <img id="thumbnailImg" src="" alt="" />
+          </div>
+
+          <!-- 本文 -->
+          <div class="article-body" id="articleBody"></div>
+
+          <a href="index.html" class="back-link">← 一覧に戻る</a>
+        </div>
+
+        <!-- ── 右カラム：サイドバー ───────────────────────── -->
+        <aside class="sidebar">
+
+          <!-- データ構造パネル（シグネチャ要素） -->
+          <div class="sidebar-card data-panel-detail" id="sidebarDataPanel">
+            <div class="sidebar-card-title">▸ このページのデータの流れ</div>
+            <div class="panel-flow" id="panelFlow">
+
+              <div class="panel-flow-item rdb active" id="flow-rdb">
+                <span class="dot"></span>
+                <div class="panel-flow-info">
+                  <span class="panel-flow-label">PostgreSQL</span>
+                  <span class="panel-flow-detail">articles テーブルから取得</span>
+                  <span class="panel-flow-query" id="flow-rdb-query">SELECT * FROM articles WHERE id = '...'</span>
+                </div>
+              </div>
+
+              <div class="panel-flow-item storage" id="flow-storage">
+                <span class="dot"></span>
+                <div class="panel-flow-info">
+                  <span class="panel-flow-label">Supabase Storage</span>
+                  <span class="panel-flow-detail">サムネイル画像を取得</span>
+                  <span class="panel-flow-query" id="flow-storage-query">getPublicUrl('knowledge-images/...')</span>
+                </div>
+              </div>
+
+              <div class="panel-flow-item vec" id="flow-vec">
+                <span class="dot"></span>
+                <div class="panel-flow-info">
+                  <span class="panel-flow-label">pgvector</span>
+                  <span class="panel-flow-detail">意味的に近い記事を検索</span>
+                  <span class="panel-flow-query">match_articles(embedding, threshold=0.5)</span>
+                </div>
+              </div>
+
+              <div class="panel-flow-item graph" id="flow-graph">
+                <span class="dot"></span>
+                <div class="panel-flow-info">
+                  <span class="panel-flow-label">Neo4j Aura</span>
+                  <span class="panel-flow-detail">タグ関連グラフを探索</span>
+                  <span class="panel-flow-query">MATCH (a)-[:HAS_TAG]->(t)&lt;-[:HAS_TAG]-(r)</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 類似記事（pgvector） -->
+          <div class="sidebar-card" id="sidebarRelated">
+            <div class="sidebar-card-title" style="color:var(--vec)">▸ 意味的に近い記事 / pgvector</div>
+            <div class="related-list" id="relatedList">
+              <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);padding:var(--s2)">
+                読み込み中...
+              </div>
+            </div>
+          </div>
+
+          <!-- 関連グラフ（Neo4j） -->
+          <div class="sidebar-card" id="sidebarGraph">
+            <div class="sidebar-card-title" style="color:var(--graph)">▸ タグ関連グラフ / Neo4j</div>
+            <div class="graph-container" id="graphContainer">
+              <div class="graph-placeholder">
+                <span>🔗</span>
+                <span>Neo4j 接続中...</span>
+              </div>
+            </div>
+          </div>
+
+        </aside>
+      </div>
+    </div>
+
+    <!-- エラー表示 -->
+    <div id="errorState" style="display:none" class="state-empty">
+      記事が見つかりませんでした。<br>
+      <a href="index.html" style="color:var(--rdb);margin-top:var(--s3);display:inline-block">← 一覧に戻る</a>
+    </div>
+
+  </main>
+
+  <!-- ── Footer ──────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="footer-db-item"><span class="dot" style="background:var(--rdb)"></span>PostgreSQL – 本文・タグ</div>
+    <div class="footer-db-item"><span class="dot" style="background:var(--storage)"></span>Storage – 画像</div>
+    <div class="footer-db-item"><span class="dot" style="background:var(--vec)"></span>pgvector – 類似記事</div>
+    <div class="footer-db-item"><span class="dot" style="background:var(--graph)"></span>Neo4j – 関連グラフ</div>
+  </footer>
+
+  <!-- ── Scripts ──────────────────────────────────────────────── -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="https://unpkg.com/neo4j-driver@5/lib/browser/neo4j-web.min.js"></script>
+  <!-- vis.js（グラフ可視化） -->
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <script type="module">
+    import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2/dist/transformers.min.js';
+    window.transformers = { pipeline };
+  </script>
+  <script type="module" src="js/detail.js"></script>
+
+</body>
+</html>

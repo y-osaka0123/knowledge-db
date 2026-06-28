@@ -6,8 +6,8 @@
 
 // ─── Supabase（RDB + pgvector + Storage） ───────────────────────────
 export const SUPABASE_CONFIG = {
-  url: "YOUR_SUPABASE_URL",           // 例: https://xxxx.supabase.co
-  anonKey: "YOUR_SUPABASE_ANON_KEY",  // Supabase Dashboard > Settings > API
+  url: "https://rqcmzxhngwnkvfrpjxmd.supabase.co",           // 例: https://xxxx.supabase.co
+  anonKey: "sb_publishable_m3mXJat4LD2N_b-FCwppMA_CHD2mbMk",  // Supabase Dashboard > Settings > API publickを設定
 };
 
 // テーブル名
