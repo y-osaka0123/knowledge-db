@@ -1,32 +1,22 @@
 /**
  * js/db/supabase.js
  * Supabase（PostgreSQL + Storage）へのデータ入出力
- * supabase-js を CDN から読み込む前提
+ * ESM版CDNを直接importするためwindow.supabase依存を排除
+ * → GitHub Pagesでも確実に動作する
  */
 
 import { SUPABASE_CONFIG, TABLES, STORAGE } from '../config.js';
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-let _client = null;
+// モジュール読み込み時に即クライアントを生成（タイミング問題を排除）
+const _client = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
 
-/** Supabase クライアントをシングルトンで返す */
-function getClient() {
-  if (_client) return _client;
-  // supabase-js は index.html の <script> で CDN 読み込み済みを想定
-  // type="module" 環境では window.supabase 経由で参照
-  const { createClient } = window.supabase;
-  _client = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
-  return _client;
-}
+function getClient() { return _client; }
 
 // ─── Articles（RDB） ─────────────────────────────────────────────
 
-/**
- * 記事一覧を取得する
- * @returns {Promise<Array>}
- */
 export async function fetchArticles() {
-  const client = getClient();
-  const { data, error } = await client
+  const { data, error } = await getClient()
     .from(TABLES.articles)
     .select(`
       id,
@@ -43,14 +33,8 @@ export async function fetchArticles() {
   return data ?? [];
 }
 
-/**
- * タグ名でフィルタリングした記事一覧を取得する
- * @param {string} tagName
- * @returns {Promise<Array>}
- */
 export async function fetchArticlesByTag(tagName) {
-  const client = getClient();
-  const { data, error } = await client
+  const { data, error } = await getClient()
     .from(TABLES.articles)
     .select(`
       id,
@@ -68,14 +52,8 @@ export async function fetchArticlesByTag(tagName) {
   return data ?? [];
 }
 
-/**
- * テキストキーワードで記事を検索する（RDB LIKE 検索）
- * @param {string} keyword
- * @returns {Promise<Array>}
- */
 export async function searchArticlesByText(keyword) {
-  const client = getClient();
-  const { data, error } = await client
+  const { data, error } = await getClient()
     .from(TABLES.articles)
     .select(`
       id,
@@ -93,14 +71,8 @@ export async function searchArticlesByText(keyword) {
   return data ?? [];
 }
 
-/**
- * 記事詳細を ID で取得する
- * @param {string} id
- * @returns {Promise<Object>}
- */
 export async function fetchArticleById(id) {
-  const client = getClient();
-  const { data, error } = await client
+  const { data, error } = await getClient()
     .from(TABLES.articles)
     .select(`
       id,
@@ -117,13 +89,8 @@ export async function fetchArticleById(id) {
   return data;
 }
 
-/**
- * 全タグ一覧を取得する
- * @returns {Promise<Array>}
- */
 export async function fetchTags() {
-  const client = getClient();
-  const { data, error } = await client
+  const { data, error } = await getClient()
     .from(TABLES.tags)
     .select('id, name')
     .order('name');
@@ -134,14 +101,8 @@ export async function fetchTags() {
 
 // ─── Storage ─────────────────────────────────────────────────────
 
-/**
- * ストレージの画像を公開URLで取得する
- * @param {string} filePath - バケット内のパス（例: "2024/hero.png"）
- * @returns {string} 公開URL
- */
 export function getImageUrl(filePath) {
-  const client = getClient();
-  const { data } = client.storage
+  const { data } = getClient().storage
     .from(STORAGE.bucket)
     .getPublicUrl(filePath);
   return data.publicUrl;
