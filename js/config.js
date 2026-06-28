@@ -25,9 +25,9 @@ export const STORAGE = {
 
 // ─── Neo4j Aura（グラフDB） ─────────────────────────────────────────
 export const NEO4J_CONFIG = {
-  uri: "YOUR_NEO4J_URI",       // 例: neo4j+s://xxxx.databases.neo4j.io
-  username: "YOUR_NEO4J_USER", // デフォルト: neo4j
-  password: "YOUR_NEO4J_PASSWORD",
+  uri: "neo4j+s://d9f54d56.databases.neo4j.io",       // 例: neo4j+s://xxxx.databases.neo4j.io
+  username: "neo4j", // デフォルト: neo4j
+  password: "982v6kKkvatSBswZgKbIeSreKp6CYpaNDIa7Et04Xxc",
 };
 
 // ─── Transformers.js（ブラウザ内Embedding） ─────────────────────────
