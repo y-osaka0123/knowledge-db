@@ -17,7 +17,9 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-
+      - name: Secrets確認
+        run: |
+          echo "SUPABASE_URL='${{ secrets.SUPABASE_URL }}'"
       - name: config.js に Secrets を注入
         run: |
           sed -i "s|%%SUPABASE_URL%%|${{ secrets.SUPABASE_URL }}|g"      js/config.js
