@@ -13,8 +13,10 @@
   --bg-elevated:  #1E2D4A;
   --border:       #2A3F5F;
   --text:         #E8EDF5;
-  --text-muted:   #7A8FAD;
-  --text-dim:     #4A607A;
+  /* --text-muted:   #7A8FAD;
+  --text-dim:     #4A607A; */
+  --text-muted:   #E8EDF5;
+  --text-dim:     #E8EDF5;
 
   /* DB accent colors */
   --rdb:      #3B82F6;  /* PostgreSQL – blue */
