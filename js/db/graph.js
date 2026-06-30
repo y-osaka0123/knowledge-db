@@ -2,7 +2,7 @@
  * js/graph.js  – Neo4j Aura グラフ操作
  * neo4j-driver は UMD版のため window.neo4j 経由（HTML側でscriptタグ読み込み済み前提）
  */
-import { NEO4J_CONFIG } from './config.js';
+import { NEO4J_CONFIG } from '../config.js';
 
 let _driver = null;
 

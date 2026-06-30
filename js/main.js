@@ -4,9 +4,9 @@
  * 一覧表示・検索・タグ絞り込みを制御する
  */
 
-import { fetchArticles, fetchTags, searchArticlesByText, fetchArticlesByTag } from './supabase.js';
-import { searchByVector } from './vector.js';
-import { setPanelStatus, resetPanel } from './dataPanel.js';
+import { fetchArticles, fetchTags, searchArticlesByText, fetchArticlesByTag } from '../js/db/supabase.js';
+import { searchByVector } from '../js/db/vector.js';
+import { setPanelStatus, resetPanel } from '../js/components/dataPanel.js';
 
 // ── DOM 参照 ──────────────────────────────────────────────────────
 const grid       = document.getElementById('articlesGrid');
