@@ -6,17 +6,17 @@
  * ※ importパスはフラット構造（js/ 直下）に合わせている
  */
 
-import { fetchArticleById, getImageUrl } from './supabase.js';
-import { searchByVector } from './vector.js';
-import { fetchRelatedGraph } from './graph.js';
+import { fetchArticleById, getImageUrl } from '../js/db/supabase.js';
+import { searchByVector } from '../js/db/vector.js';
+import { fetchRelatedGraph } from '../js/db/graph.js';
 
 // ── DOM 参照 ──────────────────────────────────────────────────────
-const loadingState   = document.getElementById('loadingState');
+const loadingState = document.getElementById('loadingState');
 const articleContent = document.getElementById('articleContent');
-const errorState     = document.getElementById('errorState');
+const errorState = document.getElementById('errorState');
 
 // ── URL パラメータから記事ID取得 ──────────────────────────────────
-const params    = new URLSearchParams(location.search);
+const params = new URLSearchParams(location.search);
 const articleId = params.get('id');
 
 console.log('[detail.js] 起動: articleId =', articleId);
@@ -57,7 +57,7 @@ async function loadArticle(id) {
   if (article.thumbnail_url) {
     const isExternal = article.thumbnail_url.startsWith('http');
     const imgUrl = isExternal ? article.thumbnail_url : getImageUrl(article.thumbnail_url);
-    const label  = isExternal ? `外部URL使用` : `Storage: getPublicUrl('${article.thumbnail_url}')`;
+    const label = isExternal ? `外部URL使用` : `Storage: getPublicUrl('${article.thumbnail_url}')`;
     setFlowStatus('storage', 'active', label);
     renderThumbnail(imgUrl);
     setFlowStatus('storage', 'done', '画像取得完了');
@@ -83,7 +83,7 @@ async function loadArticle(id) {
 
   // ④ Neo4j（関連グラフ）
   console.log('[detail.js] ④ Neo4j処理開始. supabase_id として渡すID =', id);
-  setFlowStatus('graph', 'active', `MATCH (a {supabase_id:'${id.slice(0,8)}...'})-[:HAS_TAG]->(t)<-[:HAS_TAG]-(r)`);
+  setFlowStatus('graph', 'active', `MATCH (a {supabase_id:'${id.slice(0, 8)}...'})-[:HAS_TAG]->(t)<-[:HAS_TAG]-(r)`);
   try {
     const { nodes, edges } = await fetchRelatedGraph(id);
     console.log('[detail.js] ④ Neo4j成功: nodes=', nodes, 'edges=', edges);
@@ -113,18 +113,18 @@ function renderArticle(article) {
   document.getElementById('articleTitle').textContent = article.title;
   document.getElementById('articleDate').textContent =
     article.created_at
-      ? new Date(article.created_at).toLocaleDateString('ja-JP', { year:'numeric', month:'long', day:'numeric' })
+      ? new Date(article.created_at).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' })
       : '';
 
   document.getElementById('articleBody').innerHTML = renderBody(article.body ?? '');
 
   document.getElementById('flow-rdb-query').textContent =
-    `SELECT id, title, body, ... FROM articles WHERE id = '${article.id.slice(0,8)}...'`;
+    `SELECT id, title, body, ... FROM articles WHERE id = '${article.id.slice(0, 8)}...'`;
 }
 
 function renderThumbnail(url) {
   const wrap = document.getElementById('articleThumbnail');
-  const img  = document.getElementById('thumbnailImg');
+  const img = document.getElementById('thumbnailImg');
   img.src = url;
   img.alt = '';
   wrap.style.display = 'block';
@@ -142,7 +142,7 @@ function renderRelated(articles, centerTitle) {
   const top = articles.slice(0, 6);
 
   // ── バブルチャート（D3.js）：中心=現在の記事、距離=非類似度 ──────
-  const width  = list.clientWidth || 280;
+  const width = list.clientWidth || 280;
   const height = 220;
   const cx = width / 2, cy = height / 2;
 
@@ -161,7 +161,7 @@ function renderRelated(articles, centerTitle) {
 
   nodes.forEach((n, i) => {
     if (n.isCenter) { n.r = cx; n.fx = cx; n.fy = cy; return; }
-    const dist  = radiusScale(n.similarity ?? 0.5);
+    const dist = radiusScale(n.similarity ?? 0.5);
     const angle = (i / top.length) * Math.PI * 2 - Math.PI / 2;
     n.x = cx + Math.cos(angle) * dist;
     n.y = cy + Math.sin(angle) * dist;
@@ -201,7 +201,7 @@ function renderRelated(articles, centerTitle) {
     .attr('font-family', 'JetBrains Mono, monospace')
     .attr('font-size', d => d.isCenter ? '10px' : '9px')
     .attr('fill', d => d.isCenter ? '#E8EDF5' : '#A855F7')
-    .each(function(d) {
+    .each(function (d) {
       const title = d.title ?? '';
       const truncated = title.length > 12 ? title.slice(0, 12) + '…' : title;
       d3.select(this).text(truncated);
@@ -237,13 +237,13 @@ function renderGraph(nodes, edges) {
   }
 
   const visNodes = nodes.map(n => ({
-    id:    n.id,
+    id: n.id,
     label: n.title ?? n.name ?? n.id,
     color: n.label === 'Tag'
       ? { background: '#10B98120', border: '#10B981' }
       : { background: '#3B82F620', border: '#3B82F6' },
     shape: n.label === 'Tag' ? 'box' : 'dot',
-    font:  { color: '#E8EDF5', size: 11, face: 'JetBrains Mono' },
+    font: { color: '#E8EDF5', size: 11, face: 'JetBrains Mono' },
   }));
 
   // cooccurrence: true のエッジ（タグ同士の共起関係）は緑の点線で区別
@@ -257,7 +257,7 @@ function renderGraph(nodes, edges) {
     title: e.cooccurrence ? `共起元の記事: ${e.via ?? ''}` : undefined,
   }));
 
-  const data    = { nodes: new vis.DataSet(visNodes), edges: new vis.DataSet(visEdges) };
+  const data = { nodes: new vis.DataSet(visNodes), edges: new vis.DataSet(visEdges) };
   const options = {
     physics: { stabilization: { iterations: 100 } },
     interaction: { hover: true, dragNodes: true },
@@ -318,10 +318,10 @@ function renderBody(text) {
       continue;
     }
     if (inCode) { html += escHtml(line) + '\n'; continue; }
-    if (line.startsWith('## '))  { html += `<h2>${escHtml(line.slice(3))}</h2>`; continue; }
+    if (line.startsWith('## ')) { html += `<h2>${escHtml(line.slice(3))}</h2>`; continue; }
     if (line.startsWith('### ')) { html += `<h3>${escHtml(line.slice(4))}</h3>`; continue; }
-    if (line.startsWith('- '))   { html += `<ul><li>${escHtml(line.slice(2))}</li></ul>`; continue; }
-    if (line.trim() === '')      { continue; }
+    if (line.startsWith('- ')) { html += `<ul><li>${escHtml(line.slice(2))}</li></ul>`; continue; }
+    if (line.trim() === '') { continue; }
     html += `<p>${inlineCode(escHtml(line))}</p>`;
   }
   return html.replace(/<\/ul><ul>/g, '');
