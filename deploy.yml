@@ -1,0 +1,40 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: config.js に Secrets を注入
+        run: |
+          sed -i "s|%%SUPABASE_URL%%|${{ secrets.SUPABASE_URL }}|g"      js/config.js
+          sed -i "s|%%SUPABASE_KEY%%|${{ secrets.SUPABASE_KEY }}|g"      js/config.js
+          sed -i "s|%%NEO4J_URI%%|${{ secrets.NEO4J_URI }}|g"            js/config.js
+          sed -i "s|%%NEO4J_PASSWORD%%|${{ secrets.NEO4J_PASSWORD }}|g"  js/config.js
+          echo "--- 注入後の config.js（パスワードは隠して確認） ---"
+          sed 's/password:.*/password: "***hidden***",/' js/config.js
+
+      - name: tools ディレクトリを除外（公開リスク回避）
+        run: rm -rf tools
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
