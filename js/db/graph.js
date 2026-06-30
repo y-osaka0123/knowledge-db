@@ -2,7 +2,7 @@
  * js/graph.js  – Neo4j Aura グラフ操作
  * neo4j-driver は UMD版のため window.neo4j 経由（HTML側でscriptタグ読み込み済み前提）
  */
-import { NEO4J_CONFIG } from './config.js';
+import { NEO4J_CONFIG } from '../config.js';
 
 let _driver = null;
 
@@ -34,7 +34,7 @@ function getDriver() {
 export async function fetchRelatedGraph(articleId) {
   console.log('[graph.js] fetchRelatedGraph() 開始. articleId =', articleId);
 
-  const driver  = getDriver();
+  const driver = getDriver();
   const session = driver.session({ defaultAccessMode: 'READ' });
 
   try {
@@ -83,7 +83,7 @@ export async function fetchRelatedGraph(articleId) {
       });
       edges.push({
         from: t1.identity.toString(),
-        to:   t2.identity.toString(),
+        to: t2.identity.toString(),
         cooccurrence: true,
         via: rec.get('via'),
       });
@@ -103,7 +103,7 @@ export async function fetchRelatedGraph(articleId) {
  * 同じタグを共有する記事の集合 → その記事群が持つ他のタグも辿る
  */
 export async function fetchTagCooccurrenceGraph(tagName, depth = 2) {
-  const driver  = getDriver();
+  const driver = getDriver();
   const session = driver.session({ defaultAccessMode: 'READ' });
 
   try {
@@ -122,7 +122,7 @@ export async function fetchTagCooccurrenceGraph(tagName, depth = 2) {
       });
       edges.push({
         from: rec.get('t1').identity.toString(),
-        to:   rec.get('t2').identity.toString(),
+        to: rec.get('t2').identity.toString(),
         strength: rec.get('strength').toNumber(),
       });
     });
