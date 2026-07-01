@@ -76,6 +76,21 @@
 </head>
 <body>
 
+  <!-- ── Header ──────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="">
+        <div class="logo">knowledge<span>.</span>db</div>
+      </a>
+      <div class="db-badges">
+        <span class="db-badge rdb">PostgreSQL</span>
+        <span class="db-badge vec">pgvector</span>
+        <span class="db-badge graph">Neo4j</span>
+        <span class="db-badge storage">Storage</span>
+      </div>
+    </div>
+  </header>
+
   <div id="loading" class="loading-overlay">
     <div>📊 記事のセマンティックマップを収束中...</div>
   </div>
@@ -92,5 +107,8 @@
   <div id="tooltip" class="tooltip"></div>
 
   <script type="module" src="js/map.js"></script>
+
+
+
 </body>
 </html>
