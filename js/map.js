@@ -20,8 +20,18 @@ async function initMap() {
       return;
     }
 
-    // 2. Embeddingを配列に抽出してPCAを適用
-    const embeddings = rawArticles.map(a => a.embedding);
+    // 2. Embeddingを配列に抽出し、文字列の場合はパースしてPCAを適用
+    const embeddings = rawArticles.map(a => {
+      if (typeof a.embedding === 'string') {
+        // 丸括弧 ( ) や 角括弧 [ ] をすべて一括で除去
+        return a.embedding
+          .replace(/[\(\)\[\]]/g, '') // ( ) [ ] を空文字に置換
+          .split(',')                 // カンマで分割
+          .map(Number);               // 数値型に変換
+      }
+      return a.embedding;
+    });
+
     console.log(`[map.js] ${rawArticles.length} 件のEmbeddingをPCA圧縮中...`);
     const coords = computePCA2D(embeddings);
 
