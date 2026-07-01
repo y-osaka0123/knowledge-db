@@ -31,7 +31,7 @@ export async function searchByVector(queryText, limit = 5) {
 
   const { data, error } = await _client.rpc('match_articles', {
     query_embedding: embedding,
-    match_threshold: 0.5,
+    match_threshold: 0.2,
     match_count: limit,
   });
 
