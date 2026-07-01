@@ -38,3 +38,19 @@ export async function searchByVector(queryText, limit = 5) {
   if (error) throw error;
   return data ?? [];
 }
+
+/**
+ * 全記事のID、タイトル、およびEmbeddingベクトルを全件取得する
+ */
+export async function fetchAllEmbeddings() {
+  // 注意: Supabaseのデフォルトのselectでは、データが大きいため
+  // 明示的にrpc関数を呼ぶか、カラムを絞って全件（制限に注意しつつ）取得します。
+  // ここでは新しく作成するRPC 'get_all_article_embeddings' を叩く想定にします。
+  const { data, error } = await _client.rpc('get_all_article_embeddings');
+  
+  if (error) {
+    console.error('[vector.js] fetchAllEmbeddings error:', error);
+    throw error;
+  }
+  return data ?? [];
+}

@@ -21,7 +21,8 @@
   /* DB accent colors */
   --rdb:      #3B82F6;  /* PostgreSQL – blue */
   --rdb-glow: #3B82F620;
-  --vec:      #A855F7;  /* pgvector    – purple */
+  /* --vec:      #A855F7;  pgvector    – purple */
+  --vec:      #E8EDF5;
   --vec-glow: #A855F720;
   --graph:    #10B981;  /* Neo4j       – emerald */
   --graph-glow:#10B98120;
